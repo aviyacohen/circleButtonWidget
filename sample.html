@@ -5,18 +5,51 @@
         <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
         <script>
                 const init = ()=>{
-                const menuOptions = {
-                    buttonsNum: 8,
-                    buttonIcons: ['edit', 'code', 'paint-brush', 'phone', 'tasks', 'trash', 'bookmark', 'wifi'],
-                    bodyBackground: "#1b2b2b",
-                    mainColor: "#A1F200",
-                    secondaryColor: "#ffeb3b",
-                    iconsColor: "white",
-                    onClick: function(buttonIndex){
-                        notify(buttonIndex);
+                    const menuOptions = {
+                        buttonsNum: 8,
+                        buttonIcons: ['edit', 'code', 'paint-brush', 'phone', 'tasks', 'trash', 'bookmark', 'wifi'],
+                        bodyBackground: "#1b2b2b",
+                        mainColor: "#A1F200",
+                        secondaryColor: "#ffeb3b",
+                        iconsColor: "white",
+                        onClick: function(buttonIndex){
+                            notify(buttonIndex);
+                        }
                     }
-                }
-                circleButtonsWidget(25, menuOptions);
+                
+                    const form = document.getElementById("optionsForm");
+                    const submit = document.getElementById("submitButton");
+                    submit.addEventListener("click", (event)=>{
+                        event.preventDefault();
+                        for(i=0;i<form.children.length;i++){
+                            let element = form.children[i];
+                            if(element.tagName === "INPUT"){
+                                let name = element.getAttribute("name");
+                                if(name === "buttonIcons"){
+                                    buttonIconsArray = element.value.split(',');
+                                    for(each in buttonIconsArray){
+                                        buttonIconsArray[each] = buttonIconsArray[each].replace(" ", "");
+                                    }
+                                    console.log(buttonIconsArray);
+                                    menuOptions[name] = buttonIconsArray;
+                                } else{
+                                    menuOptions[name] = element.value;
+                                }
+                            } else if (element.tagName === "SELECT"){
+                                let name = element.getAttribute("name");
+                                let selectedOption = element.options[element.selectedIndex].value;
+                                menuOptions[name] = Number(selectedOption);
+                            }
+                        }
+                        const wrapper = document.getElementById("circleButtonsWidgetWrapper");
+                        while (wrapper.firstChild) {
+                            wrapper.removeChild(wrapper.firstChild);
+                        }
+                        console.log(menuOptions);
+                        circleButtonsWidget(25, menuOptions);
+                    });
+
+                    circleButtonsWidget(25, menuOptions);
                 }
         </script>
         <script src="./circleButtonsWidget.js"></script>
@@ -29,6 +62,31 @@
             <h2>A zero* dependency circular buttons widget</h2>
             <p>Draggable, customizable, and of course.. clickable :-)</p><p>
             </p><p>*The icons are from font-awesome (all the rest is pure-js though!)</p>
+        </div>
+        <style>
+        div#optionsConfig>form>label{
+            display:block;
+            color: white;
+        }
+        </style>
+        <div id="optionsConfig" style="display:block;border:1px solid white;width: 20vw;padding:1vw;">
+            <form id="optionsForm" name="widgetOptions" method="POST" action"/">
+                <label>Number of buttons</label>
+                <select name="buttonsNum" id="buttonsNumSelect">
+                    <option value=4>4</option>
+                    <option value=6>6</option>
+                    <option value=8 selected=true>8</option>
+                </select>
+                <label>Main Color</label>
+                <input name="mainColor" value="#A1F200" type="color">
+                <label>Secondary Color</label>
+                <input name="secondaryColor" value="#ffeb3b" type="color">
+                <label>Icons Color</label>
+                <input name="iconsColor" value="#ffffff" type="color">
+                <label>Icons</label>
+                <input name="buttonIcons" style="width:18vw" value="edit, code, paint-brush, phone, tasks, trash, bookmark, wifi">
+                <input id="submitButton" style="display:block;margin:1vw 0;" type="submit" value="launch">
+            </form>
         </div>
     </body>
 </html>
